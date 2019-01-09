@@ -51,88 +51,13 @@ public class PlayerController : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        float mod = 1;
-        //if (moveVertical < 0) mod = 0.70f;
         
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
+        Vector3 tempMovement = _transform.InverseTransformDirection(movement);
+        this.AnimateMove(tempMovement.x, tempMovement.z);
 
-
-
-
-        Vector3 forw = _transform.TransformDirection(Vector3.forward);
-        Vector3 transformRight = _transform.TransformDirection(Vector3.right);
-        //float forwAndUp = Vector3.Dot(forw, Vector3.forward);
-        //float forwAndRight = Vector3.Dot(forw, Vector3.right);
-
-        float animMoveHorizontal = moveHorizontal;
-        float animMoveVertical = moveVertical;
-
-        float angle = Vector3.Angle(forw, Vector3.forward);
-
-
-        //право-лево смотрим
-        if (angle > 45 && angle < 135)
-        {
-            animMoveHorizontal = moveVertical;
-            animMoveVertical = moveHorizontal;
-
-            //смотрим лево
-            if (Vector3.Dot(Vector3.right, forw) < 0)
-            {
-                animMoveVertical = -animMoveVertical;
-                if(animMoveVertical != 0)
-                {
-                    animMoveHorizontal = animMoveHorizontal - forw.z;
-                }
-                else if(animMoveHorizontal != 0)
-                {
-                    animMoveVertical = animMoveVertical + forw.z;
-                }
-            }
-            else //смотрим право
-            {
-                animMoveHorizontal = -animMoveHorizontal;
-                Debug.Log(forw.z);
-                if (animMoveVertical != 0)
-                {
-                    animMoveHorizontal = animMoveHorizontal + forw.z;
-                }
-                else if (animMoveHorizontal != 0)
-                {
-                    animMoveVertical = animMoveVertical - forw.z;
-                }
-                
-            }
-
-        }
-        else //смотрим верх низ
-        {
-            //смотрим низ
-            if (Vector3.Dot(Vector3.forward, forw) < 0)
-            {
-                animMoveVertical = -animMoveVertical;
-                animMoveHorizontal = -animMoveHorizontal;
-                if (animMoveVertical != 0)
-                {
-                    animMoveHorizontal = animMoveHorizontal + forw.x;
-                }
-            }
-            else//смотрим право
-            {
-                if (animMoveVertical != 0)
-                {
-                    animMoveHorizontal = animMoveHorizontal - forw.x;
-                }
-            }
-            
-
-        }
-        
-        this.AnimateMove(animMoveHorizontal, animMoveVertical);
-
-
-        movement = movement.normalized * speed * mod * Time.fixedDeltaTime;
+        movement = movement.normalized * speed * Time.fixedDeltaTime;
         _rb.MovePosition(_transform.position + movement);
     }
 
